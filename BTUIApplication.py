@@ -7,6 +7,7 @@ from bt_ui_components import hci_commands as hci
 from bt_ui_components import style_sheet as ss
 from reportlab.lib.colors import palegreen
 from test_framework.logger import Logger
+from test_framework.utils import run
 from bt_ui_components.bluez_utils_25 import BluezLogger
 from test_automation.UI_Application.controller_lib import Controller
 from bt_ui_components.bt_ui_dummy import TestApplication
@@ -128,7 +129,7 @@ class BluetoothUIApp(QMainWindow):
         if not os.path.exists(path):
             os.mkdir(path)
         self.log.setup_logger_file(path)
-    '''
+
     def main_window(self):
         """ Creates main window with option to select list of devices. """
         self.setWindowTitle("Bluetooth UI Application")
@@ -195,7 +196,7 @@ class BluetoothUIApp(QMainWindow):
         self.setCentralWidget(widget)
     
     
-    def list_controllers(self):
+    def list_controller(self):
         """ Lists the controllers connected on the host. """
         self.devices_button.close()
         self.controllers_list_layout.removeWidget(self.devices_button)
@@ -211,119 +212,22 @@ class BluetoothUIApp(QMainWindow):
         self.controllers_list_layout.addStretch(3)
         self.test_controller.show()
         self.test_application.show()
-    
 
-    def list_controllers(self):
-        self.setWindowTitle("Bluetooth UI Application")
-        palette = QPalette()
-        palette.setBrush(QPalette.ColorRole.Window,QBrush(QPixmap('/root/Desktop/BT_Automation/images/main_window_background.jpg')))
-        self.setPalette(palette)
-
-        main_layout = QVBoxLayout()
-        main_layout.addStretch(1)
-        application_label_layout = QHBoxLayout()
-        application_label=QLabel("BLUETOOTH TEST APPLICATION")
-        font=QFont("Aptos Black", 28, QFont.Weight.Bold)
-        application_label.setFont(font)
-        application_label.setStyleSheet("color: black;")
-        application_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        application_label_layout.addStretch(1)
-        application_label_layout.addWidget(application_label)
-        application_label_layout.addStretch(1)
-        main_layout.addLayout(application_label_layout)
-        main_layout.addSpacing(30)
-        #main_layout.addStretch(1)
-
-        self.controllers_list_layout = QHBoxLayout()
-        self.controllers_list_widget=QListWidget()
-        self.controllers_list_widget.setMinimumSize(800, 400)
-        self.controllers_list_widget.itemAlignment()
-        self.add_items(self.controllers_list_widget, list(self.controller.get_controllers_connected().keys()),Qt.AlignmentFlag.AlignHCenter)
-        self.controllers_list_widget.setStyleSheet(ss.list_widget_style_sheet)
-        self.controllers_list_widget.currentTextChanged.connect(self.controller_selected)
-        self.controllers_list_layout.addStretch(1)
-        #main_layout.addSpacing(20)
-        main_layout.addWidget(self.controllers_list_widget)
-        self.controllers_list_layout.addStretch(3)
-        main_layout.addStretch(1)
-        main_layout.addLayout(self.controllers_list_layout)
-        main_layout.addStretch(3)
-
-        #main_layout.addSpacing(60)
-        buttons_layout = QGridLayout()
-        button_layout = QHBoxLayout()
-        self.test_controller=QToolButton()
-        self.test_controller.setText("Test Controller")
-        #self.test_controller.setMinimumSize(200,100)
-        self.test_controller.setGeometry(100, 100, 200, 100)
-        self.test_controller.clicked.connect(self.check_controller_selected)
-        self.test_controller.setStyleSheet(ss.select_button_style_sheet)
-        self.test_controller.hide()
-
-        button_layout.addSpacing(20)
-        button_layout.addWidget(self.test_controller)
-        buttons_layout.addLayout(button_layout, 0, 0)
-        button_layout1 = QHBoxLayout()
-        self.test_application=QToolButton()
-        self.test_application.setText("Test Application")
-        self.test_application.clicked.connect(self.test_application_clicked)
-        self.test_application.setGeometry(100, 100, 200, 100)
-        self.test_application.setStyleSheet(ss.select_button_style_sheet)
-        self.test_application.hide()
-        button_layout.addWidget(self.test_application)
-        buttons_layout.addLayout(button_layout1, 0, 1)
-        
-        
-        main_layout.addLayout(buttons_layout)
-        main_layout.addStretch(1)
-        widget = QWidget()
-        widget.setLayout(main_layout)
-        self.setCentralWidget(widget)
-        self.test_controller.show()
-        self.test_application.show()
-        
-        buttons_layout=QHBoxLayout()
-        self.test_controller=QToolButton()
-        self.test_controller.setText("Test Controller")
-        self.test_controller.setMinimumSize(200,100)
-        self.test_controller.clicked.connect(self.check_controller_selected)
-        self.test_controller.setStyleSheet(ss.select_button_style_sheet)
-
-        self.test_application = QToolButton()
-        self.test_controller.setText("Test Application")
-        self.test_application.setMinimumSize(200, 100)
-        self.test_application.clicked.connect(self.test_application_clicked)
-        self.test_application.setStyleSheet(ss.select_button_style_sheet)
-
-        buttons_layout.addStretch(1)
-        buttons_layout.addWidget(self.test_controller)
-        #buttons_layout.addSpacing(40)
-        buttons_layout.addWidget(self.test_application)
-        buttons_layout.addStretch(1)
-        main_layout.addLayout(buttons_layout)
-        main_layout.addStretch(1)
-
-        widget = QWidget()
-        widget.setLayout(main_layout)
-        self.setCentralWidget(widget)
-        self.test_controller.show()
-        self.test_application.show()
-        '''
 
     def list_controllers(self):
         self.setWindowTitle("Bluetooth UI Application")
 
-        # Set background
+        
         palette = QPalette()
         palette.setBrush(QPalette.ColorRole.Window,
                          QBrush(QPixmap('/root/Desktop/BT_Automation/images/main_window_background.jpg')))
         self.setPalette(palette)
 
-        # Main layout
+
         main_layout = QVBoxLayout()
         main_layout.addStretch(1)
 
-        # Title
+
         application_label_layout = QHBoxLayout()
         application_label = QLabel("BLUETOOTH TEST APPLICATION")
         font = QFont("Aptos Black", 28, QFont.Weight.Bold)
@@ -336,56 +240,57 @@ class BluetoothUIApp(QMainWindow):
         main_layout.addLayout(application_label_layout)
         main_layout.addStretch(1)
 
-        # Controller list
+
         self.controllers_list_layout = QHBoxLayout()
         self.controllers_list_widget = QListWidget()
         self.controllers_list_widget.setMinimumSize(800, 400)
+
         self.add_items(
             self.controllers_list_widget,
             list(self.controller.get_controllers_connected().keys()),
             Qt.AlignmentFlag.AlignHCenter
         )
+        #self.controllers_list_widget.setCurrentItem(None)
         self.controllers_list_widget.setStyleSheet(ss.list_widget_style_sheet)
-        self.controllers_list_widget.currentTextChanged.connect(self.controller_selected)
+        #self.controllers_list_widget.currentTextChanged.connect(self.controller_selected)
+        self.controllers_list_widget.itemClicked.connect(self.controller_selected)
         self.controllers_list_layout.addStretch(1)
         self.controllers_list_layout.addWidget(self.controllers_list_widget)
         self.controllers_list_layout.addStretch(1)
         main_layout.addLayout(self.controllers_list_layout)
 
-        # Info label (interface, bus, etc.) will be dynamically added in controller_selected()
+
 
         main_layout.addStretch(1)
 
-        # Buttons
+
         buttons_layout = QGridLayout()
 
-        # Test Controller
+
         button_layout = QHBoxLayout()
         self.test_controller = QToolButton()
         self.test_controller.setText("Test Controller")
         self.test_controller.setGeometry(100, 100, 200, 100)
         self.test_controller.clicked.connect(self.check_controller_selected)
         self.test_controller.setStyleSheet(ss.select_button_style_sheet)
-        self.test_controller.hide()
         button_layout.addWidget(self.test_controller)
         buttons_layout.addLayout(button_layout, 0, 0)
 
-        # Test Application
+
         button_layout1 = QHBoxLayout()
         self.test_application = QToolButton()
         self.test_application.setText("Test Application")
         self.test_application.clicked.connect(self.test_application_clicked)
         self.test_application.setGeometry(100, 100, 200, 100)
         self.test_application.setStyleSheet(ss.select_button_style_sheet)
-        self.test_application.hide()
         button_layout1.addWidget(self.test_application)
         buttons_layout.addLayout(button_layout1, 0, 1)
 
-        # Add buttons layout to main layout
+       
         main_layout.addLayout(buttons_layout)
         main_layout.addStretch(1)
 
-        # Final setup
+        
         widget = QWidget()
         widget.setLayout(main_layout)
         self.setCentralWidget(widget)
@@ -393,6 +298,7 @@ class BluetoothUIApp(QMainWindow):
         # Show buttons after layout is complete
         self.test_controller.show()
         self.test_application.show()
+
 
     def add_items(self, widget, items, align):
         """Adds the items to the list widget.
@@ -408,16 +314,23 @@ class BluetoothUIApp(QMainWindow):
             item.setTextAlignment(align)
             widget.addItem(item)
 
-    def controller_selected(self, controller):
+    def controller_selected(self, item):
         """ Updates the controller list with details of the selected controller.
 
         Args:
             controller: selected controller address.
         """
+        controller=item.text()
         self.log.info(f"Controller Selected: {controller}")
         self.controller.bd_address = controller
+        if controller in self.controller.controllers_list:
+            self.controller.interface=self.controller.controllers_list[controller]
+        run(self.log, f"hciconfig -a {self.controller.interface} up")
+
         if self.previous_row_selected:
             self.controllers_list_widget.takeItem(self.previous_row_selected)
+
+
         row = self.controllers_list_widget.currentRow()
         item = QListWidgetItem(self.controller.get_controller_interface_details())
         item.setTextAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -431,7 +344,7 @@ class BluetoothUIApp(QMainWindow):
         else:
             dlg = CustomDialog(self)
             if not dlg.exec():
-                self.main_window()
+                self.list_controllers()
 
     def check_application_selected(self):
         """Checks and raises a dialog box if Test Application button is clicked without controller selection."""
@@ -440,7 +353,7 @@ class BluetoothUIApp(QMainWindow):
         else:
             dlg = CustomDialog(self)
             if not dlg.exec():
-                self.main_window()
+                self.list_controllers()
 
 
     def controller_window(self):
@@ -490,22 +403,21 @@ class BluetoothUIApp(QMainWindow):
                                  "font-weight: bold;")
         logs_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         logs_layout.addWidget(logs_label)
-        self.bluez_logger.start_dump_logs()
-        #self.controller.start_dump_logs()
+        #self.bluez_logger.start_dump_logs()
+        self.controller.start_dump_logs()
 
         self.dump_log_output = QTextEdit()
         self.dump_log_output.setMaximumWidth(700)
         self.dump_log_output.setReadOnly(True)
-        #content = self.controller.logfile_fd.read()
-        content = self.bluez_logger.logfile_fd.read()
-        #self.controller.file_position = self.controller.logfile_fd.tell()
-        self.bluez_logger.file_position = self.bluez_logger.logfile_fd.tell()
+        content = self.controller.logfile_fd.read()
+        #content = self.bluez_logger.logfile_fd.read()
+        #self.bluez_logger.file_position = self.bluez_logger.logfile_fd.tell()
         self.dump_log_output.append(content)
         logs_layout.addWidget(self.dump_log_output)
 
         self.file_watcher = QFileSystemWatcher()
         self.file_watcher.addPath(self.controller.hcidump_log_name)
-        self.file_watcher.addPath(self.bluez_logger.hcidump_log_name)
+        #self.file_watcher.addPath(self.bluez_logger.hcidump_log_name)
         self.file_watcher.addPath(self.bluez_logger.hcidump_log_name)
         self.file_watcher.fileChanged.connect(self.update_log)
         self.dump_log_output.setStyleSheet("border: 2px solid black;")
@@ -619,12 +531,12 @@ class BluetoothUIApp(QMainWindow):
 
     def update_log(self):
         """ Updates the dump logs on the logs layout from log file"""
-        #self.controller.logfile_fd.seek(self.controller.file_position)
-        self.bluez_logger.logfile_fd.seek(self.bluez_logger.file_position)
-        #content = self.controller.logfile_fd.read()
-        content = self.bluez_logger.logfile_fd.read()
-        #self.controller.file_position = self.controller.logfile_fd.tell()
-        self.bluez_logger.file_position = self.bluez_logger.logfile_fd.tell()
+        self.controller.logfile_fd.seek(self.controller.file_position)
+        #self.bluez_logger.logfile_fd.seek(self.bluez_logger.file_position)
+        content = self.controller.logfile_fd.read()
+        #content = self.bluez_logger.logfile_fd.read()
+        self.controller.file_position = self.controller.logfile_fd.tell()
+        #self.bluez_logger.file_position = self.bluez_logger.logfile_fd.tell()
         self.dump_log_output.append(content)
 
 
@@ -636,7 +548,7 @@ class BluetoothUIApp(QMainWindow):
         """ Displays the Test Application window inside the main GUI. """
         if self.centralWidget():
             self.centralWidget().deleteLater()
-        #self.controller.start_dump_logs()
+        self.controller.start_dump_logs()
         self.test_application_widget = TestApplication()
         self.setCentralWidget(self.test_application_widget)
         self.close()
@@ -647,6 +559,7 @@ if __name__ == "__main__":
     app_window = BluetoothUIApp()
     app_window.setWindowIcon(QIcon('/root/Desktop/BT_Automation/images/app_icon.png'))
     #app_window.main_window()
+    #app_window.list_controllers()
     app_window.showMaximized()
 
 
